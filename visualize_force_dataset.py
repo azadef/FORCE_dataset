@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     mv = MeshViewer()
     smpl_hands = SMPL_Layer('male', hands=True)
-    betas = torch.from_numpy(pkl.load(open('force_dataset/betas.pkl', 'rb'))['beta']).float().reshape(1, 10)
+    betas = torch.from_numpy(pkl.load(open('force_dataset/assets/betas.pkl', 'rb'))['beta']).float().reshape(1, 10)
     data_paths = glob(join('force_dataset/force_npz/*.npz'))
     for data_path in data_paths:
         seq_name = data_path.split('\\')[-1].split('.npz')[0]

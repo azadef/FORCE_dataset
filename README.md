@@ -13,8 +13,10 @@ The FORCE dataset provides a comprehensive set of human-object interaction scena
 
 ## Dataset Overview
 
-### Media Preview
-A detailed overview of the dataset can be found in `media/dataset.mp4`.
+### Dataset Preview
+![Dataset Preview](assets/dataset_preview.gif)
+
+<!-- A detailed overview of the dataset can be found in `media/dataset.mp4`. -->
 
 ### Features
 * Physical interactions between humans and objects with various resistance levels.

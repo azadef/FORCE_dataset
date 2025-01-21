@@ -6,14 +6,14 @@ The FORCE dataset provides a comprehensive set of human-object interaction scena
 
 * `assets/` Contains scanned 3D models of all objects used in the dataset.
 * `force_npz/` Includes human motion in SMPL format, along with the corresponding object motion data (pose and translation).
-* `annotations_final/` Provides the final annotations for all interactions.
+* `annotations_final/` Provides the annotations for all interactions (weights, objects, sequences, etc.)
 * `lib/` Contains utility libraries for processing the dataset.
 * `visualize_force_dataset.py` A Python script to visualize and explore the dataset.
 * `betas.pkl` SMPL body shape parameters.
 
 ## Dataset Overview
 
-![Dataset Preview](assets/dataset.gif)
+![Dataset Preview](media/dataset.gif)
 
 <!-- A detailed overview of the dataset can be found in `media/dataset.mp4`. -->
 

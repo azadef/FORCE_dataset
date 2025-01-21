@@ -13,8 +13,7 @@ The FORCE dataset provides a comprehensive set of human-object interaction scena
 
 ## Dataset Overview
 
-### Dataset Preview
-![Dataset Preview](assets/dataset_preview.gif)
+![Dataset Preview](assets/dataset.gif)
 
 <!-- A detailed overview of the dataset can be found in `media/dataset.mp4`. -->
 
@@ -37,8 +36,7 @@ python visualize_force_dataset.py
 
 ## Contact
 
-If you have any questions or need assistance with the dataset, feel free to contact:
-**Xiaohan Zhang** 📧 Email: xzhang@mpif-inf.mpg.de
+If you have any questions or need assistance with the dataset, feel free to contact us: xzhang@mpi-inf.mpg.de
 
 ## Citation
 

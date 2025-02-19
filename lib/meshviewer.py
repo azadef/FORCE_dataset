@@ -245,7 +245,7 @@ class MeshViewer(object):
                                    use_raymond_lighting=True,
                                    viewport_size=(width, height),
                                    cull_faces=False,
-                                   run_in_thread=True,
+                                   run_in_thread=False, #True
                                    registered_keys=registered_keys)
 
         for i, node in enumerate(self.scene.get_nodes()):
@@ -772,3 +772,7 @@ def Axis(scale=0.5):
     v = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]) * scale
     e = np.array([[0, 1], [0, 2], [0, 3]])
     return [Lines(vertices=v, indices=e)]
+
+if __name__ == '__main__':
+
+    mv = MeshViewer()

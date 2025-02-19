@@ -5,9 +5,7 @@ import torch
 from torch.nn import Module
 
 from smplpytorch.native.webuser.serialization import ready_arguments
-from smplpytorch.pytorch import rodrigues_layer
-from smplpytorch.pytorch.tensutils import (th_posemap_axisang, th_with_zeros, th_pack, make_list, subtract_flat_id)
-from os.path import exists
+from smplpytorch.pytorch.tensutils import th_posemap_axisang, th_with_zeros, th_pack, make_list
 from scipy.sparse import csc_matrix
 
 class SMPL_Layer(Module):
@@ -17,7 +15,7 @@ class SMPL_Layer(Module):
                  normalise=False,
                  center_idx=None,
                  gender='neutral',
-                 model_root='C:\\Users\\vguzo\\Desktop\\Projects\\egomotion\\lib\\', num_betas=10, hands=False):
+                 model_root='./lib/', num_betas=10, hands=False):
         """
         Args:
             center_idx: index of center joint in our computations,
@@ -30,19 +28,21 @@ class SMPL_Layer(Module):
         self.gender = gender
         self.hands = hands
         if gender == 'neutral':
+            #SMPL + H
             if self.hands:
                 self.model_path = dict(
                     np.load(os.path.abspath('lib/neutral.npz'), allow_pickle=True))
+                print(self.model_path.keys())
                 self.model_path['bs_type'] = self.model_path['bs_type'].item().decode('utf-8')
                 self.model_path['J_regressor'] = csc_matrix(self.model_path['J_regressor'])
 
             else:
-                self.model_path = os.path.abspath('lib/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl')
+                self.model_path = os.path.abspath('SMPL_models/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl')
 
         elif gender == 'female':
             # self.model_path = os.path.join(model_root, 'basicModel_f_lbs_10_207_0_v1.0.0.pkl')
             if self.hands:
-                self.model_path = os.path.join('/BS/XZ_project2/work/mano_v1_2/models/SMPLH_female.pkl')
+                self.model_path = os.path.join('SMPL_models/SMPLH_female.pkl')
             else:
                 self.model_path = os.path.abspath(os.path.join(model_root, 'female_model.pkl'))
 
@@ -50,9 +50,9 @@ class SMPL_Layer(Module):
             # self.model_path = os.path.join(model_root, 'basicModel_m_lbs_10_207_0_v1.0.0.pkl')
             # self.model_path = os.path.join(model_root, 'male_model.pkl')
             if self.hands:
-                self.model_path = os.path.join('lib/SMPLH_male.pkl')
+                self.model_path = os.path.join('SMPL_models/SMPLH_male.pkl')
             else:
-                self.model_path = os.path.abspath('lib/basicModel_male_lbs_10_207_0_v1.0.0.pkl')
+                self.model_path = os.path.abspath('SMPL_models/basicModel_male_lbs_10_207_0_v1.0.0.pkl')
 
         smpl_data = ready_arguments(self.model_path)
         self.smpl_data = smpl_data
@@ -137,6 +137,20 @@ class SMPL_Layer(Module):
     #     # print(th_jtr.mean())
     #     # Vertices and joints in meters
     #     return th_jtr, torch.stack(th_results_global, 1)
+
+    def subtract_flat_id(self, rot_mats, hands=True):
+        # Subtracts identity as a flattened tensor
+        if hands:
+            num_joints = 51
+        else:
+            num_joints = 23
+        id_flat = torch.eye(
+            3, dtype=rot_mats.dtype, device=rot_mats.device).view(1, 9).repeat(
+            rot_mats.shape[0], num_joints)  # 23
+        # id_flat.requires_grad = False
+        results = rot_mats - id_flat
+        return results
+
     def forward(self,
                 pose,
                 betas=torch.zeros(1),
@@ -156,7 +170,7 @@ class SMPL_Layer(Module):
         root_rot = th_pose_rotmat[:, :9].view(batch_size, 3, 3)
         # Take out the remaining rotmats (23 joints)
         th_pose_rotmat = th_pose_rotmat[:, 9:]
-        th_pose_map = subtract_flat_id(th_pose_rotmat, self.hands)
+        th_pose_map = self.subtract_flat_id(th_pose_rotmat, self.hands) #
 
         # Below does: v_shaped = v_template + shapedirs * betas
         # If shape parameters are not provided

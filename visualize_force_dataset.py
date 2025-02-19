@@ -17,9 +17,9 @@ SCAN_PATH = {
     "box_huge": "assets/box_huge.ply"
 }
 
-seq_file = open('force_dataset/annotations_final/seqs.txt')
+seq_file = open('./annotations_final/seqs.txt')
 seqs = seq_file.readlines()
-obj_file = open('force_dataset/annotations_final/objs.txt')
+obj_file = open('./annotations_final/objs.txt')
 objs = obj_file.readlines()
 seq_obj_dict = {}
 for i, seq in enumerate(seqs):
@@ -29,10 +29,10 @@ if __name__ == '__main__':
 
     mv = MeshViewer()
     smpl_hands = SMPL_Layer('male', hands=True)
-    betas = torch.from_numpy(pkl.load(open('force_dataset/assets/betas.pkl', 'rb'))['beta']).float().reshape(1, 10)
-    data_paths = glob(join('force_dataset/force_npz/*.npz'))
+    betas = torch.from_numpy(pkl.load(open('./assets/betas.pkl', 'rb'))['beta']).float().reshape(1, 10)
+    data_paths = glob(join('./force_npz/*.npz'))
     for data_path in data_paths:
-        seq_name = data_path.split('\\')[-1].split('.npz')[0]
+        seq_name = data_path.split('/')[-1].split('.npz')[0]
         if seq_obj_dict[seq_name] == '0':
             category = 'backpack'
         elif seq_obj_dict[seq_name] == '1':
@@ -74,7 +74,9 @@ if __name__ == '__main__':
                                               torch.from_numpy(obj_mesh_vertices).float().T) +
                                  obj_trans_params[i].reshape(3, 1)).T.numpy()
 
-            mv.set_static_meshes(
-                [Mesh(vertices=fit_verts[i], faces=smpl_hands.faces.numpy(), smooth=True, vc=colors['lightblue']),
-                 obj_mesh])
+            mv.viewer.render_lock.acquire()
+            mv.set_static_meshes([Mesh(vertices=fit_verts[i], faces=smpl_hands.faces.numpy(), smooth=True, vc=colors['lightblue']), obj_mesh])
+            mv.viewer.render_lock.release()
             time.sleep(0.03)
+            print(i, obj_mesh.vertices.shape)
+        break
